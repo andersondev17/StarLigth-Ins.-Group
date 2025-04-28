@@ -1,12 +1,7 @@
+import { NavItemProps } from '@/types/types';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
 
-interface NavItemProps {
-    item: string;
-    handleNavigation: (id: string) => void;
-    isLarge?: boolean;
-    isMobile?: boolean;
-}
 
 const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: NavItemProps) => {
     const itemRef = useRef<HTMLDivElement>(null);
@@ -94,7 +89,7 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
                 }}
                 className={`
                     ${isLarge 
-                        ? "text-dark-100 text-4xl font-bold transition-all duration-200 hover:text-primary-200" 
+                        ? "text-color-primary-200 text-4xl font-bold transition-all duration-200 hover:text-primary-200" 
                         : "text-black font-medium text-sm tracking-wide transition-colors duration-300 relative group overflow-hidden block"
                     }
                     ${isMobile ? "text-dark-100 text-3xl font-medium py-3" : ""}

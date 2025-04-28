@@ -1,5 +1,6 @@
 'use client';
 import Home from "@/components/Layout/Home";
+import ProductsShowcase from "@/components/ProductsShowcase";
 import dynamic from "next/dynamic";
 
 const Whyus = dynamic(() => import('@/components/Whyus'), {
@@ -13,8 +14,10 @@ const page = () => {
       {/* Value Proposition Section */}
       <Home />
 
-      {/* Why Starlight Section */}
-      <Whyus />
+      {/* Products Section */}
+
+      <ProductsShowcase />
+
 
     </main>
 

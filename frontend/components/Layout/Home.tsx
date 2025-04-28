@@ -23,7 +23,7 @@ const Hero = () => {
                 );
 
             gsap.fromTo(".image-reveal",
-                { clipPath: 'circle(27.6% at 68% 69%)' },
+                { clipPath: 'circle(31.1% at 64% 64%)' },
                 {
                     clipPath: 'circle(150% at 50% 65%)',
                     scrollTrigger: {
@@ -47,7 +47,7 @@ const Hero = () => {
         >
             <div className="absolute inset-0">
                 <Image
-                    src="/img/hero.webp"
+                    src="/img/hero.jpg"
                     alt="Starry night with mountain silhouette"
                     fill
                     priority
@@ -73,7 +73,7 @@ const Hero = () => {
             {/* Reveal image simplificado */}
             <div className="image-reveal absolute inset-0 z-10">
                 <Image
-                    src="/img/hero.webp"
+                    src="/img/hero.jpg"
                     alt="Starry night with mountain silhouette"
                     fill
                     quality={90}
@@ -110,7 +110,7 @@ const Hero = () => {
 
             {/* Scroll indicator accesible */}
             <div
-                className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 animate-bounce"
+                className=" bottom-8 left-1/2 -translate-x-1/2 z-30 animate-bounce"
                 aria-hidden="true"
             >
                 <svg width="24" height="36" viewBox="0 0 24 36">

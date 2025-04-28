@@ -37,7 +37,6 @@ const nextConfig = {
     optimizeCss: true,
     optimizePackageImports: ['react-icons', 'gsap', 'react-use'],
   },
- 
 };
 
 module.exports = nextConfig;

@@ -1,5 +1,6 @@
 'use client';
 
+import Footer from "@/components/Layout/Footer";
 import NavBar from "@/components/Layout/navbar/Navbar";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -26,6 +27,7 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
         {children}
       </main>
       
+      <Footer />
       {/* Footer */}
     </div>
   );
