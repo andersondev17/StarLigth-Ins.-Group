@@ -32,11 +32,6 @@ const nextConfig = {
       },
     ];
   },
-  // Optimizaciones experimentales
-  experimental: {
-    optimizeCss: true,
-    optimizePackageImports: ['react-icons', 'gsap', 'react-use'],
-  },
 };
 
 module.exports = nextConfig;
