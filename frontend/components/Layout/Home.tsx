@@ -12,16 +12,16 @@ const Hero = () => {
     const heroRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
 
-    // Animaciones unificadas
-    // Current implementation in Home.tsx
     useEffect(() => {
         const ctx = gsap.context(() => {
+            // Animación inicial de entrada
             gsap.timeline({ defaults: { ease: 'power3.out' } })
                 .fromTo(".hero-content > *",
                     { y: 40, opacity: 0 },
                     { y: 0, opacity: 1, stagger: 0.15 }
                 );
 
+            // Animación de la imagen al hacer scroll
             gsap.fromTo(".image-reveal",
                 { clipPath: 'circle(31.1% at 64% 64%)' },
                 {
@@ -34,6 +34,19 @@ const Hero = () => {
                     }
                 }
             );
+
+            // Animación del contenido: desplazamiento moderado que no corte el botón
+            if (contentRef.current) {
+                gsap.to(contentRef.current, {
+                    y: 100, // Valor más moderado para evitar que se corte el botón
+                    scrollTrigger: {
+                        trigger: heroRef.current,
+                        start: 'top top',
+                        end: '60% top', // Un poco más largo para que sea más suave
+                        scrub: 0.8, // Más suave para evitar movimientos bruscos
+                    }
+                });
+            }
         }, heroRef);
 
         return () => ctx.revert();
@@ -91,7 +104,7 @@ const Hero = () => {
             </div>
 
             {/* Contenido simplificado */}
-            <div ref={contentRef} className="hero-content absolute z-30 top-1/3 left-6 sm:left-12 md:left-16 lg:left-24 max-w-md sm:max-w-lg px-4 sm:px-0">
+            <div ref={contentRef} className="hero-content absolute z-30 top-1/4 left-6 sm:left-12 md:left-16 lg:left-24 max-w-md sm:max-w-lg px-4 sm:px-0">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
                     Your Trusted <span className="text-primary-100">Insurance Partner</span>
                 </h1>
@@ -107,20 +120,11 @@ const Hero = () => {
                     </Button>
                 </div>
             </div>
-
-            {/* Scroll indicator accesible */}
-            <div
-                className=" bottom-8 left-1/2 -translate-x-1/2 z-30 animate-bounce"
-                aria-hidden="true"
-            >
-                <svg width="24" height="36" viewBox="0 0 24 36">
-                    <path
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        d="M12 4v28M12 32l-8-8m8 8 8-8"
-                    />
-                </svg>
+            <div className="absolute bottom-4 right-4 z-50 text-white font-semibold tracking-widest text-sm sm:text-base uppercase">
+                (Scroll Down)
             </div>
+
+
         </section>
     );
 };

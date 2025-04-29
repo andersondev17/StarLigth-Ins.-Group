@@ -2,7 +2,6 @@ import { NavItemProps } from '@/types/types';
 import gsap from 'gsap';
 import { useEffect, useRef } from 'react';
 
-
 const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: NavItemProps) => {
     const itemRef = useRef<HTMLDivElement>(null);
 
@@ -10,13 +9,16 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
         if (!itemRef.current) return;
 
         const elem = itemRef.current;
+        const label = elem.querySelector('.nav-label');
+        if (!label) return;
+        
+        // Definir el color base y el color hover
+        const baseColor = isLarge || isMobile ? "#FFFFFF" : "#000000";
+        const hoverColor = "#1E88E5"; // StarLight blue
         
         // Create mouse enter animation handler
         const handleMouseEnter = () => {
             if (isMobile) return; // No animation for mobile
-            
-            const label = elem.querySelector('.nav-label');
-            if (!label) return;
             
             // Create flip animation timeline
             const tl = gsap.timeline();
@@ -31,7 +33,7 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
                 duration: 0.2,
                 rotationX: 0,
                 y: 0,
-                color: "#1E88E5", // StarLight blue
+                color: hoverColor,
                 ease: "power1.inOut",
                 transformOrigin: "center center"
             });
@@ -40,9 +42,6 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
         // Create mouse leave animation handler
         const handleMouseLeave = () => {
             if (isMobile) return; // No animation for mobile
-            
-            const label = elem.querySelector('.nav-label');
-            if (!label) return;
             
             // Create reset animation timeline
             const tl = gsap.timeline();
@@ -57,7 +56,7 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
                 duration: 0.2,
                 rotationX: 0,
                 y: 0,
-                color: isLarge ? "#000000" : "#000000", // Original color
+                color: baseColor,
                 ease: "power1.inOut",
                 transformOrigin: "center center"
             });
@@ -76,6 +75,9 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
 
     const href = `#${item.toLowerCase().replace(/\s+/g, '-')}`;
 
+    // Simplificado: aplica directamente el color correcto según el contexto
+    const textColorClass = isLarge || isMobile ? "text-white" : "text-black";
+
     return (
         <div
             ref={itemRef}
@@ -88,11 +90,10 @@ const NavItem = ({ item, handleNavigation, isLarge = false, isMobile = false }: 
                     handleNavigation(href);
                 }}
                 className={`
-                    ${isLarge 
-                        ? "text-color-primary-200 text-4xl font-bold transition-all duration-200 hover:text-primary-200" 
-                        : "text-black font-medium text-sm tracking-wide transition-colors duration-300 relative group overflow-hidden block"
-                    }
-                    ${isMobile ? "text-dark-100 text-3xl font-medium py-3" : ""}
+                    ${textColorClass}
+                    ${isLarge ? "text-4xl font-bold" : "font-medium text-sm tracking-wide relative group overflow-hidden block"}
+                    ${isMobile ? "text-3xl py-3" : ""}
+                    transition-all duration-200 hover:text-primary-200
                 `}
             >
                 <span className="nav-label inline-block">

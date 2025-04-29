@@ -1,69 +1,59 @@
 import { NAV_ITEMS_MOBILE } from "@/constants/navData";
 import { MenuContentProps } from "@/types/types";
+import { useEffect, useState } from "react";
 import { TiLocationArrow } from "react-icons/ti";
 import ContactInfo from "./ContactInfo";
 import NavItem from "./NavItem";
 
 const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuContentProps) => {
+    const [isMobileView, setIsMobileView] = useState(false);
+    
+    // Detectar si estamos en vista móvil
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobileView(window.innerWidth < 1024);
+        };
+        
+        // Comprobar al inicio
+        checkMobile();
+        
+        // Comprobar al cambiar tamaño de ventana
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
+
     return (
-        <div
+        <div 
             ref={menuRef}
-            className={`fixed inset-0 z-40 bg-white/95 transition-opacity duration-300 ${
+            className={`fixed inset-0 z-40 transition-opacity duration-300 ${
                 isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
             }`}
         >
-            <div className="max-w-7xl mx-auto px-8 py-8 flex h-full">
-                {/* Mobile Menu Layout */}
-                <div className="flex flex-col h-full relative w-full lg:hidden">
-                    <div className="flex flex-col gap-4 mb-10 pt-16">
-                        {NAV_ITEMS_MOBILE.map(item => (
-                            <NavItem 
-                                key={item} 
-                                item={item} 
-                                handleNavigation={handleNavigation}
-                                isMobile
-                            />
-                        ))}
-                    </div>
+            {/* Fondo transparente con blur */}
+            <div className="absolute inset-0 bg-transparent backdrop-blur-md"></div>
+            
+            {/* Overlay semitransparente para legibilidad */}
+            <div className="absolute inset-0 bg-dark-100/60"></div>
 
-                    {/* Mobile Contact Info & CTA */}
-                    <div className="mt-auto pb-8">
-                        <ContactInfo className="text-dark-300/70 mb-6" />
-                        <a
-                            href="#contact"
-                            className="inline-flex items-center gap-2 mt-4"
-                            onClick={(e) => {
-                                e.preventDefault();
-                                handleNavigation("#contact");
-                                toggleMenu();
-                            }}
-                        >
-                            <span className="text-dark-100 text-base font-medium">Find an Agent</span>
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-dark-100 text-white">
-                                <TiLocationArrow />
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                
-                {/* Desktop Menu Layout */}
-                <div className="hidden lg:flex w-full">
-                    {/* Left side - Navigation */}
-                    <div className="w-1/3 pr-10 py-8 flex flex-col justify-center">
-                        <div className="flex flex-col gap-8">
-                            {NAV_ITEMS_MOBILE.map(item => (
+            <div className="relative z-10 max-w-7xl mx-auto px-8 py-8 h-full flex">
+                <div className="flex w-full">
+                    {/* Navigation Items */}
+                    <div className="w-full lg:w-1/3 lg:pr-10 flex flex-col justify-center">
+                        <div className="flex flex-col gap-8 perspective-container">
+                            {NAV_ITEMS_MOBILE.map((item) => (
                                 <NavItem 
                                     key={item} 
                                     item={item} 
                                     handleNavigation={handleNavigation}
-                                    isLarge
+                                    isLarge={!isMobileView} // Solo grande en desktop
+                                    isMobile={isMobileView} // Indicar si es móvil
                                 />
                             ))}
                         </div>
                     </div>
 
-                    {/* Right side - Feature Content */}
-                    <div className="w-2/3 pl-10 py-20 border-l border-gray-200 flex flex-col justify-between">
+                    {/* Additional content - desktop only */}
+                    <div className="hidden lg:flex w-2/3 pl-10 py-20 border-l border-white/10 flex-col justify-between">
                         {/* Feature highlight */}
                         <div className="flex flex-col gap-6 max-w-2xl bg-white/95 p-8 rounded-lg shadow-lg">
                             <h3 className="text-2xl font-bold text-dark-100">Insurance For Your Future</h3>
@@ -72,27 +62,36 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
                             </p>
                             <a
                                 href="#contact"
-                                className="inline-flex items-center gap-2 text-primary-200 hover:text-primary-200/80 font-medium"
+                                className="inline-flex items-center gap-2 text-primary-200 hover:text-primary-200/80 font-medium group"
                                 onClick={(e) => {
                                     e.preventDefault();
                                     handleNavigation("#contact");
                                     toggleMenu();
                                 }}
                             >
-                                Learn more about our plans
-                                <TiLocationArrow />
+                                <span>Learn more about our plans</span>
+                                <TiLocationArrow className="transform transition-transform group-hover:translate-x-1" />
                             </a>
                         </div>
 
                         {/* Contact info */}
-                        <div className="mt-auto pt-10 flex justify-between items-end">
+                        <div className="mt-auto flex justify-between items-end">
                             <div className="bg-white/95 p-8 rounded-lg shadow-lg">
                                 <ContactInfo className="text-black text-lg" />
                             </div>
+                            
+                        </div>
+                    </div>
+                    
+                    {/* Mobile-only content */}
+                    <div className="lg:hidden w-full flex flex-col justify-end pb-8">
+                        <div className="bg-white/95 p-6 rounded-lg shadow-lg">
+                            <ContactInfo className="text-black" />
                         </div>
                     </div>
                 </div>
             </div>
+            
         </div>
     );
 };
