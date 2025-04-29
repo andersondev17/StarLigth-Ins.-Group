@@ -21,6 +21,9 @@ export interface MenuContentProps {
 
 export interface LogoProps {
     isScrolled: boolean;
+    isPastHero: boolean;
+    className?: string;
+    isCompact?: boolean;
 }
 
 export interface ContactInfoProps {

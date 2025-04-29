@@ -1,3 +1,4 @@
+import AnimatedText from "@/components/ui/AnimatedText";
 import { NAV_ITEMS_MOBILE } from "@/constants/navData";
 import { MenuContentProps } from "@/types/types";
 import { useEffect, useState } from "react";
@@ -25,7 +26,7 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
     return (
         <div 
             ref={menuRef}
-            className={`fixed inset-0 z-40 transition-opacity duration-300 ${
+            className={`fixed inset-0 z-50 transition-opacity duration-300 ${
                 isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
             }`}
         >
@@ -35,7 +36,7 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
             {/* Overlay semitransparente para legibilidad */}
             <div className="absolute inset-0 bg-dark-100/60"></div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-8 py-8 h-full flex">
+            <div className="relative z-45 max-w-7xl mx-auto px-8 py-8 h-full flex">
                 <div className="flex w-full">
                     {/* Navigation Items */}
                     <div className="w-full lg:w-1/3 lg:pr-10 flex flex-col justify-center">
@@ -60,18 +61,24 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
                             <p className="text-dark-300/80 text-lg">
                                 StarLight Insurance provides comprehensive coverage options for individuals, families, and businesses. Our team of experienced agents is ready to help you navigate the complexities of insurance.
                             </p>
-                            <a
-                                href="#contact"
-                                className="inline-flex items-center gap-2 text-primary-200 hover:text-primary-200/80 font-medium group"
-                                onClick={(e) => {
-                                    e.preventDefault();
-                                    handleNavigation("#contact");
-                                    toggleMenu();
-                                }}
-                            >
-                                <span>Learn more about our plans</span>
-                                <TiLocationArrow className="transform transition-transform group-hover:translate-x-1" />
-                            </a>
+                            
+                            {/* Usando AnimatedText para el enlace de Learn more */}
+                            <div className="group flex items-center">
+                                <AnimatedText
+                                    asLink={true}
+                                    href="#contact"
+                                    baseColor="#1E88E5"
+                                    className="inline-flex items-center gap-2 font-medium"
+                                    onClick={(e) => {
+                                        e.preventDefault();
+                                        handleNavigation("#contact");
+                                        toggleMenu();
+                                    }}
+                                >
+                                    Learn more about our plans
+                                </AnimatedText>
+                                <TiLocationArrow className="ml-2 transform transition-transform group-hover:translate-x-1" />
+                            </div>
                         </div>
 
                         {/* Contact info */}
@@ -79,7 +86,6 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
                             <div className="bg-white/95 p-8 rounded-lg shadow-lg">
                                 <ContactInfo className="text-black text-lg" />
                             </div>
-                            
                         </div>
                     </div>
                     
@@ -91,7 +97,6 @@ const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuCont
                     </div>
                 </div>
             </div>
-            
         </div>
     );
 };

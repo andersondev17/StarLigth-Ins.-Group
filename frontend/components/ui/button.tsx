@@ -14,9 +14,10 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const baseStyles = 'group relative z-10 overflow-hidden rounded-full text-black transition-all duration-200 ease-in-out transform hover:scale-105 shadow-lg relative overflow-hidden group';
 
 const sizeStyles = {
-    sm: 'px-4 py-2 text-xs',
+    sm: 'px-3 py-2 text-xs min-h-9',
     md: 'px-7 py-3 text-sm',
     lg: 'px-8 py-4 text-base'
+    
 };
 
 const variantStyles = {
