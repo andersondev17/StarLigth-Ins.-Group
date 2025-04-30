@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { FaInstagram } from "react-icons/fa";
 import NavItem from "./NavItem";
 
-const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuContentProps) => {
+const MenuContent = ({ isOpen, menuRef, handleNavigation }: MenuContentProps) => {
     const [isMobileView, setIsMobileView] = useState(false);
 
     // Detect mobile view
