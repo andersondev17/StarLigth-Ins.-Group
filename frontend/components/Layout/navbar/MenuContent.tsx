@@ -1,101 +1,91 @@
-import AnimatedText from "@/components/ui/AnimatedText";
 import { NAV_ITEMS_MOBILE } from "@/constants/navData";
 import { MenuContentProps } from "@/types/types";
 import { useEffect, useState } from "react";
-import { TiLocationArrow } from "react-icons/ti";
-import ContactInfo from "./ContactInfo";
+import { FaInstagram } from "react-icons/fa";
 import NavItem from "./NavItem";
 
 const MenuContent = ({ isOpen, menuRef, handleNavigation, toggleMenu }: MenuContentProps) => {
     const [isMobileView, setIsMobileView] = useState(false);
-    
-    // Detectar si estamos en vista móvil
+
+    // Detect mobile view
     useEffect(() => {
         const checkMobile = () => {
             setIsMobileView(window.innerWidth < 1024);
         };
-        
-        // Comprobar al inicio
+
         checkMobile();
-        
-        // Comprobar al cambiar tamaño de ventana
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
 
     return (
-        <div 
+        <div
             ref={menuRef}
-            className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-                isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-            }`}
+            className={`fixed inset-0 py-20 z-50 transition-opacity duration-300 ${isOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
         >
-            {/* Fondo transparente con blur */}
-            <div className="absolute inset-0 bg-transparent backdrop-blur-md"></div>
-            
-            {/* Overlay semitransparente para legibilidad */}
-            <div className="absolute inset-0 bg-dark-100/60"></div>
+            {/* Background with blur */}
+            <div className="absolute inset-0 bg-dark-100/90 backdrop-blur-sm"></div>
 
-            <div className="relative z-45 max-w-7xl mx-auto px-8 py-8 h-full flex">
-                <div className="flex w-full">
-                    {/* Navigation Items */}
-                    <div className="w-full lg:w-1/3 lg:pr-10 flex flex-col justify-center">
-                        <div className="flex flex-col gap-8 perspective-container">
+            <div className="relative z-45 h-full flex flex-col">
+                <div className="flex-1 flex flex-col lg:flex-row">
+                    <div className="lg:w-1/2 px-8 lg:px-16 py-20 flex flex-col justify-center">
+                        <div className="flex flex-col gap-6 perspective-container">
                             {NAV_ITEMS_MOBILE.map((item) => (
-                                <NavItem 
-                                    key={item} 
-                                    item={item} 
-                                    handleNavigation={handleNavigation}
-                                    isLarge={!isMobileView} // Solo grande en desktop
-                                    isMobile={isMobileView} // Indicar si es móvil
-                                />
+                                <div key={item} className="py-2">
+                                    <NavItem
+                                        item={item}
+                                        handleNavigation={handleNavigation}
+                                        isLarge={true}
+                                        isMobile={isMobileView}
+                                    />
+                                </div>
                             ))}
                         </div>
-                    </div>
 
-                    {/* Additional content - desktop only */}
-                    <div className="hidden lg:flex w-2/3 pl-10 py-20 border-l border-white/10 flex-col justify-between">
-                        {/* Feature highlight */}
-                        <div className="flex flex-col gap-6 max-w-2xl bg-white/95 p-8 rounded-lg shadow-lg">
-                            <h3 className="text-2xl font-bold text-dark-100">Insurance For Your Future</h3>
-                            <p className="text-dark-300/80 text-lg">
-                                StarLight Insurance provides comprehensive coverage options for individuals, families, and businesses. Our team of experienced agents is ready to help you navigate the complexities of insurance.
-                            </p>
-                            
-                            {/* Usando AnimatedText para el enlace de Learn more */}
-                            <div className="group flex items-center">
-                                <AnimatedText
-                                    asLink={true}
-                                    href="#contact"
-                                    baseColor="#1E88E5"
-                                    className="inline-flex items-center gap-2 font-medium"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        handleNavigation("#contact");
-                                        toggleMenu();
-                                    }}
-                                >
-                                    Learn more about our plans
-                                </AnimatedText>
-                                <TiLocationArrow className="ml-2 transform transition-transform group-hover:translate-x-1" />
-                            </div>
+                        <div className="mt-12 pt-6 border-t border-white/10">
+                            <a
+                                href="https://instagram.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 text-white hover:text-primary-200 transition-colors"
+                            >
+                                <FaInstagram size={20} />
+                                <span className="text-sm tracking-wider">INSTAGRAM</span>
+                            </a>
                         </div>
 
-                        {/* Contact info */}
-                        <div className="mt-auto flex justify-between items-end">
-                            <div className="bg-white/95 p-8 rounded-lg shadow-lg">
-                                <ContactInfo className="text-black text-lg" />
-                            </div>
+                        {/* Legal links (similar to OH Architecture) */}
+                        <div className="mt-6 flex flex-row  gap-6 text-xs text-light-400">
+                            <a
+                                href="/privacy-policy"
+                                className="hover:text-white tracking-wider transition-colors"
+                            >
+                                PRIVACY POLICY
+                            </a>
+                            <a
+                                href="/terms-of-service"
+                                className="hover:text-white tracking-wider transition-colors"
+                            >
+                                TERMS OF SERVICE
+                            </a>
+
+                        </div>
+                        <div className="mt-6 flex flex-col lg:flex-row gap-6 text-xs text-light-400">
+                            <a href="mailto:contact@starlight.com" className="block transition-colors hover:text-primary-200 font-medium mb-1">
+                                contact@starlight.com
+                            </a>
+                            <a
+                                href="/terms-of-service"
+                                className="hover:text-white tracking-wider transition-colors"
+                            >
+                                123 Insurance Avenue                            </a>
                         </div>
                     </div>
-                    
-                    {/* Mobile-only content */}
-                    <div className="lg:hidden w-full flex flex-col justify-end pb-8">
-                        <div className="bg-white/95 p-6 rounded-lg shadow-lg">
-                            <ContactInfo className="text-black" />
-                        </div>
-                    </div>
+
+
                 </div>
+
             </div>
         </div>
     );

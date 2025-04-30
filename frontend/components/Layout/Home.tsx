@@ -14,20 +14,24 @@ if (typeof window !== 'undefined') {
 const Hero = () => {
     const heroRef = useRef<HTMLDivElement>(null);
     const contentRef = useRef<HTMLDivElement>(null);
+    const imageRevealRef = useRef<HTMLDivElement>(null);
     const [imagesLoaded, setImagesLoaded] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
 
     // Detector de dispositivo móvil
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768);
-        checkMobile();
-        window.addEventListener('resize', checkMobile);
-        return () => window.removeEventListener('resize', checkMobile);
+        const mediaQuery = window.matchMedia('(max-width: 768px)');
+        const updateMobile = () => setIsMobile(mediaQuery.matches);
+
+        mediaQuery.addEventListener('change', updateMobile);
+        updateMobile(); // Valor inicial
+
+        return () => mediaQuery.removeEventListener('change', updateMobile);
     }, []);
 
     // Animaciones GSAP
     useEffect(() => {
-        if (!imagesLoaded || !heroRef.current || !contentRef.current) return;
+        if (!imagesLoaded || !heroRef.current || !contentRef.current || !imageRevealRef.current) return;
 
         const ctx = gsap.context(() => {
             // Animación de entrada del contenido
@@ -36,18 +40,18 @@ const Hero = () => {
                 { y: 0, opacity: 1, stagger: 0.1, duration: 0.6 }
             );
 
-            // Animación del efecto reveal de imagen
-            gsap.fromTo(".image-reveal",
+            // Animación del efecto reveal usando el div con clase overlay
+            gsap.fromTo(imageRevealRef.current,
                 { clipPath: 'circle(31.1% at 64% 64%)' },
-                isMobile 
-                    ? { 
-                        clipPath: 'circle(150% at 50% 65%)', 
-                        duration: 1.2, 
-                        delay: 0.3, 
-                        ease: "power2.inOut" 
+                isMobile
+                    ? {
+                        clipPath: 'circle(150% at 50% 65%)',
+                        duration: 1.2,
+                        delay: 0.3,
+                        ease: "power2.inOut"
                     }
-                    : { 
-                        clipPath: 'circle(150% at 50% 65%)', 
+                    : {
+                        clipPath: 'circle(150% at 50% 65%)',
                         scrollTrigger: {
                             trigger: heroRef.current,
                             start: 'top top',
@@ -57,15 +61,15 @@ const Hero = () => {
                     }
             );
 
-            // Animación de scroll para el contenido
+            // Movimiento del contenido hacia abajo con valores más grandes para asegurar que se esconda
             gsap.to(contentRef.current, {
-                y: isMobile ? 0 : 120, // Mayor desplazamiento en desktop, 0 en móvil
-                opacity: 0, // Desvanecimiento al hacer scroll
+                y: isMobile ? 300 : 300,
+                opacity: 0,
                 scrollTrigger: {
                     trigger: heroRef.current,
                     start: 'top top',
-                    end: isMobile ? '80% top' : '60% top',
-                    scrub: true,
+                    end: isMobile ? '60% top' : '50% top',
+                    scrub: 0.8,
                 }
             });
         }, heroRef);
@@ -73,7 +77,7 @@ const Hero = () => {
         return () => ctx.revert();
     }, [imagesLoaded, isMobile]);
 
-    // Manejador de carga de imágenes
+    // Manejador de carga de imágenes - ahora solo necesitamos uno
     const handleImagesLoaded = () => setImagesLoaded(true);
 
     return (
@@ -82,67 +86,45 @@ const Hero = () => {
             ref={heroRef}
             className="relative h-[100svh] overflow-hidden"
         >
-            {/* Imagen de fondo */}
+            {/* Una única imagen para el fondo con media queries en CSS */}
             <div className="absolute inset-0 z-[1]">
-                <div className="hidden sm:block h-full">
-                    <Image
-                        src="/img/hero.jpg"
-                        alt="Starry night with mountain silhouette"
-                        fill
-                        priority={true}
-                        quality={75}
-                        sizes="100vw"
-                        className="object-cover brightness-50"
-                        placeholder="blur"
-                        blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBAQFBAYFBQYJBgUGCQsIBgYICwwKCgsKCgwQDAwMDAwMEAwODxAPDgwTExQUExMcGxsbHCAgICAgICAgICD/2wBDAQcHBw0MDRgQEBgaFREVGiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICD/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAeEAABBAEFAAAAAAAAAAAAAAABAAIDBAURBhITYf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AKfR5bTLjrDmkkbAwujYXENA4AJPQREoj//Z"
-                        onLoad={handleImagesLoaded}
-                    />
-                </div>
-                <div className="sm:hidden h-full">
-                    <Image
-                        src="/img/heroMobile.webp"
-                        alt="Starry night with mountain silhouette"
-                        fill
-                        priority={true}
-                        quality={60}
-                        sizes="100vw"
-                        className="object-cover brightness-50"
-                        placeholder="blur"
-                        blurDataURL="data:image/webp;base64,UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDIAAAABD3D1/1BERFHrGgBENDY2BgA="
-                        onLoad={handleImagesLoaded}
-                    />
-                </div>
+                <Image
+                    src={isMobile ? "/img/heroMobile.webp" : "/img/hero.jpg"}
+                    alt="Starry night with mountain silhouette"
+                    fill
+                    priority={true}
+                    quality={isMobile ? 60 : 75}
+                    sizes="100vw"
+                    className="object-cover brightness-50"
+                    placeholder="blur"
+                    decoding="async"
+                    blurDataURL={isMobile
+                        ? "data:image/webp;base64,UklGRkoAAABXRUJQVlA4WAoAAAAQAAAAEwAAEwAAQUxQSDIAAAABD3D1/1BERFHrGgBENDY2BgA="
+                        : "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD/2wBDAAYEBAQFBAYFBQYJBgUGCQsIBgYICwwKCgsKCgwQDAwMDAwMEAwODxAPDgwTExQUExMcGxsbHCAgICAgICAgICD/2wBDAQcHBw0MDRgQEBgaFREVGiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICD/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAP/xAAeEAABBAEFAAAAAAAAAAAAAAABAAIDBAURBhITYf/EABUBAQEAAAAAAAAAAAAAAAAAAAAB/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AKfR5bTLjrDmkkbAwujYXENA4AJPQREoj//Z"
+                    }
+                    onLoad={handleImagesLoaded}
+                />
             </div>
 
-            {/* Efecto reveal de imagen */}
-            <div className="image-reveal absolute inset-0 z-[10]">
-                <div className="hidden sm:block h-full">
-                    <Image
-                        src="/img/hero.jpg"
-                        alt="Starry night with mountain silhouette"
-                        fill
-                        quality={75}
-                        sizes="100vw"
-                        className="object-cover"
-                        onLoad={handleImagesLoaded}
-                    />
-                </div>
-                <div className="sm:hidden h-full">
-                    <Image
-                        src="/img/heroMobile.webp"
-                        alt="Starry night with mountain silhouette"
-                        fill
-                        quality={60}
-                        sizes="100vw"
-                        className="object-cover"
-                        onLoad={handleImagesLoaded}
-                    />
-                </div>
+            {/* Capa de revelación */}
+            <div
+                ref={imageRevealRef}
+                className="absolute inset-0 z-[10] overflow-hidden"
+            >
+                {/* Una única instancia de imagen con manejo responsivo */}
+                <Image
+                    src={isMobile ? "/img/heroMobile.webp" : "/img/hero.jpg"}
+                    alt="Starry night with mountain silhouette"
+                    fill
+                    quality={isMobile ? 60 : 75}
+                    sizes="100vw"
+                    className="object-cover"
+                />
             </div>
 
             {/* Contenido del hero */}
-            <div 
-                ref={contentRef} 
+            <div
+                ref={contentRef}
                 className="hero-content absolute z-[20] 
                     top-1/4 sm:top-1/3 
                     left-4 sm:left-12 md:left-16 lg:left-24 
@@ -175,9 +157,14 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Indicador de scroll simplificado */}
-            <div className="absolute bottom-4 right-4 z-[25] text-white font-medium tracking-widest text-xs sm:text-sm uppercase opacity-60">
-                (Scroll Down)
+            {/* Indicador de scroll - visible en todas las resoluciones */}
+            <div className="absolute bottom-8 right-6 sm:right-8 z-[25] flex flex-col items-center">
+                <p className="text-white font-medium tracking-widest text-xs sm:text-sm uppercase mb-2 opacity-80">
+                    Scroll
+                </p>
+                <div className="w-6 h-10 border border-white/40 rounded-full flex justify-center">
+                    <div className="w-1.5 h-3 bg-white/80 rounded-full mt-1 animate-bounce"></div>
+                </div>
             </div>
 
             {/* Gradiente de transición */}

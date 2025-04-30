@@ -8,7 +8,7 @@ const Logo = ({ isScrolled }: LogoProps) => {
             {/* Logo con ajustes responsivos */}
             <div className={`relative flex-shrink-0 transition-all duration-500
                 ${isScrolled 
-                    ? 'hidden' 
+                    ? 'hidden'
                     : 'w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16'
                 }`}
             >

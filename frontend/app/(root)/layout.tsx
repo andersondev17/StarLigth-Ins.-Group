@@ -3,7 +3,7 @@
 import Footer from "@/components/Layout/Footer";
 import NavBar from "@/components/Layout/navbar/Navbar";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
@@ -11,10 +11,11 @@ const RootLayout = ({ children }: { children: React.ReactNode }) => {
   
   // Page transition effect
   useEffect(() => {
-    setPageLoaded(true);
-    
+    startTransition(() => {
+      setPageLoaded(true);
+    });    
     // Reset scroll position on page change
-    window.scrollTo(0, 0);
+    requestAnimationFrame(() => window.scrollTo(0, 0));
   }, [pathname]);
 
   return (
